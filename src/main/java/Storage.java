@@ -1,11 +1,28 @@
 public class Storage {
-    private static volatile int items = 1000;
+    private static volatile Storage instance;
 
-    public static int getItems() {
-        return items;
+    private int items;
+
+    public boolean isEmpty() {
+        return items <= 0;
     }
 
-    public static synchronized int buyItems (int itemsAmount) {
+    private Storage() {
+        items = 1000;
+    }
+
+    public static Storage getInstance() {
+        if (instance == null) {
+            synchronized (Storage.class) {
+                if (instance == null) {
+                    instance = new Storage();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public synchronized int buyItems (int itemsAmount) {
         if (items < itemsAmount) {
             itemsAmount = items;
             items = 0;

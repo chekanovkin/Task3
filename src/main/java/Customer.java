@@ -17,22 +17,19 @@ public class Customer extends Thread {
         return purchaseAmount;
     }
 
-    public void addItems(int items) {
-        itemsAmount += items;
-    }
-
     public  void setCyclicBarrier(CyclicBarrier cyclicBarrier) {
         this.cyclicBarrier = cyclicBarrier;
     }
 
     @Override
     public void run() {
-        while (Storage.getItems() != 0) {
+        Storage storage = Storage.getInstance();
+        while (!storage.isEmpty()) {
             try {
-                cyclicBarrier.await(); // не понял, почему это нужно делать, нашел методом тыка
-                int boughtItems = Storage.buyItems(1 + (int) (Math.random() * 10));
+                cyclicBarrier.await();
+                int boughtItems = storage.buyItems(1 + (int) (Math.random() * 10));
                 if (boughtItems != 0) {
-                    addItems(boughtItems);
+                    itemsAmount += boughtItems;
                     purchaseAmount++;
                 }
                 cyclicBarrier.await();
